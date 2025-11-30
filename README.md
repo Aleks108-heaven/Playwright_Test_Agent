@@ -48,7 +48,7 @@ Create a `.env` file in the project root with the following variables:
 '''
 uniqueEmail=<user1764504923183@example.com>
 password=NewUser@2024Secure
-_email=<test@example.com>
+_email=<wrongtest@example.com>
 _password=WrongPassword@123
 '''
 
