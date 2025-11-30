@@ -71,6 +71,6 @@ test.describe('Quick Registration & Login Test', () => {
     await page.locator('[data-test="password"]').fill(password);
 
     // Click the "Login" button
-    await page.locator('[data-test="login-submit"]').click();
+    await page.locator('[data-test="login-submit"]').click();//A customer with this email address already exists.
   });
 });
