@@ -1,13 +1,13 @@
 import { test, expect } from '@playwright/test';
 import * as dotenv from 'dotenv';
+import { requireEnv } from './helpers/env';
 
 dotenv.config();
 
 test.describe('Login with valid credentials', () => {
   test('Login succeeds with correct credentials', async ({ page }) => {
-    // Get credentials from environment variables
-    const uniqueEmail = process.env.uniqueEmail!;
-    const password = process.env.password!;
+    const uniqueEmail = requireEnv('uniqueEmail');
+    const password = requireEnv('password');
     
     // Navigate to https://practicesoftwaretesting.com/
     await page.goto('https://practicesoftwaretesting.com/');
@@ -23,5 +23,9 @@ test.describe('Login with valid credentials', () => {
     
     // Click the "Login" button
     await page.locator('[data-test="login-submit"]').click();
+
+    // A successful login should navigate away from the login page.
+    await page.waitForURL((url) => !url.toString().includes('/auth/login'), { timeout: 15000 });
+    expect(page.url()).not.toContain('/auth/login');
   });
 });

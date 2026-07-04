@@ -1,13 +1,13 @@
 import { test, expect } from '@playwright/test';
 import * as dotenv from 'dotenv';
+import { requireEnv } from './helpers/env';
 
 dotenv.config();
 
 test.describe('Login fails with incorrect password', () => {
-    test('Login fails with wrong password', async ({ page }) => {
-    // Get credentials from environment variables
-    const _email = process.env._email!;
-    const _password = process.env._password!;
+  test('Login fails with wrong password', async ({ page }) => {
+    const _email = requireEnv('_email');
+    const _password = requireEnv('_password');
     
     // Navigate to https://practicesoftwaretesting.com/
     await page.goto('https://practicesoftwaretesting.com/');
@@ -24,10 +24,10 @@ test.describe('Login fails with incorrect password', () => {
     // Click the "Login" button
     await page.locator('[data-test="login-submit"]').click();
     
-    // Verify error message appears
-    await page.locator('text=/invalid|password|incorrect/i').waitFor({ state: 'visible' }).catch(() => {});
+    // Verify a login error is visible.
+    await expect(page.locator('text=/invalid email or password|invalid|incorrect/i').first()).toBeVisible({ timeout: 10000 });
     
     // Verify login fails by checking user remains on login page
     expect(page.url()).toContain('/auth/login');
-    });
+  });
   });

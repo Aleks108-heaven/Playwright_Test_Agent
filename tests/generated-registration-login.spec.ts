@@ -2,16 +2,15 @@
 
 import { test, expect } from '@playwright/test';
 import * as dotenv from 'dotenv';
+import { buildUniqueEmail, requireEnv } from './helpers/env';
 
 dotenv.config();
 
 test.describe('Quick Registration & Login Test', () => {
   
   test('Register a new user', async ({ page }) => {
-
-    // Get credentials from environment variables with fallbacks
-    const uniqueEmail = process.env.uniqueEmail || `user${Date.now()}@example.com`;
-    const password = process.env.password || process.env.PASSWORD || '';
+    const uniqueEmail = buildUniqueEmail();
+    const password = process.env.password || process.env.PASSWORD || requireEnv('password');
     
     // Navigate to https://practicesoftwaretesting.com/
     await page.goto('https://practicesoftwaretesting.com/');
@@ -57,12 +56,9 @@ test.describe('Quick Registration & Login Test', () => {
     
     // Click the "Register" button
     await page.locator('[data-test="register-submit"]').click();
-    
-    // Wait for registration to complete and redirect to account or login page
-    // await page.waitForURL(url => !url.toString().includes('/auth/register'), { timeout: 10000 });
-    
-    // Verify registration completes successfully by checking user is redirected away from registration page
-    // expect(page.url()).not.toContain('/auth/register');
+
+    await page.waitForURL((url) => !url.toString().includes('/auth/register'), { timeout: 15000 });
+    expect(page.url()).not.toContain('/auth/register');
 
     // Fill in "Email address" with the same unique email used during registration
     await page.locator('[data-test="email"]').fill(uniqueEmail);
@@ -71,6 +67,9 @@ test.describe('Quick Registration & Login Test', () => {
     await page.locator('[data-test="password"]').fill(password);
 
     // Click the "Login" button
-    // await page.locator('[data-test="login-submit"]').click();//A customer with this email address already exists.
+    await page.locator('[data-test="login-submit"]').click();
+
+    await page.waitForURL((url) => !url.toString().includes('/auth/login'), { timeout: 15000 });
+    expect(page.url()).not.toContain('/auth/login');
   });
 });
